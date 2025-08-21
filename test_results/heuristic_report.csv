@@ -1,0 +1,16 @@
+id,question,lex_f1,lex_precision,lex_recall,context_hit_rate
+q1,Quelles sont les conditions de lumière recommandées pour Monstera deliciosa ?,0.421,0.308,0.667,0.562
+q2,À quelle fréquence faut‑il arroser une Sansevieria en intérieur ?,0.231,0.188,0.3,0.312
+q3,Quelle est la température minimale recommandée pour Aloe vera ?,0.111,0.071,0.25,0.188
+q4,Comment multiplier un Monstera deliciosa ?,0.143,0.107,0.214,0.562
+q5,"Faut-il pincer le basilic, et pour quelle raison ?",0.48,0.4,0.6,0.25
+q6,Quel entretien effectuer après la floraison de la lavande vraie (Lavandula angustifolia) ?,0.343,0.24,0.6,0.0
+q7,Laquelle tolère le mieux les oublis d’arrosage : Chlorophytum comosum ou Sansevieria trifasciata ?,0.35,0.269,0.5,0.25
+q8,Quelle exposition est idéale pour le romarin (Rosmarinus officinalis) ?,0.2,0.167,0.25,0.062
+q9,La menthe verte (Mentha spicata) est-elle envahissante et comment la contrôler ?,0.222,0.167,0.333,0.375
+q10,Quelle plage de température est idéale pour Ficus lyrata ?,0.0,0.0,0.0,0.375
+q11,Pourquoi les feuilles d’un Monstera peuvent-elles jaunir ?,0.25,0.167,0.5,0.75
+q12,Quelles plantes de la liste préfèrent le plein soleil ?,0.533,0.4,0.8,0.5
+q13,Comment entretenir un lierre (Hedera helix) en pot ?,0.286,0.25,0.333,0.312
+q14,Quand rempoter un Monstera deliciosa ?,0.556,0.385,1.0,0.5
+q15,"Parmi les aromatiques citées, laquelle résiste le mieux à la sécheresse ?",0.16,0.125,0.222,0.375

@@ -5,6 +5,7 @@ __pycache__/
 
 # ChromaDB
 chroma_db_plants/
+chroma_db_plants_eval/
 
 # C extensions
 *.so
