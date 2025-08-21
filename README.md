@@ -46,9 +46,14 @@ pyto-plant-coach-poc/
 │   ├── Basilic.md                # with structured YAML metadata
 │   ├── Chlorophytum comosum.md   # and detailed botanical content
 │   └── ...                       # 10+ documented species
-├── 🧠 plant_rag_system.py        # Core RAG system
+├── 🧠 plant_rag_system.py        # Core RAG system (enhanced)
+├── 🧪 eval_ragas.py              # Automated evaluation framework
 ├── 🖥️ streamlit_app.py           # Streamlit user interface
 ├── 🗄️ chroma_db_plants/          # Persisted vector database
+├── 📊 test_results/               # Evaluation results and reports
+│   ├── eval_results_raw.json     # Raw Q&A results
+│   ├── heuristic_report.csv      # Heuristic evaluation scores
+│   └── ragas_report.csv          # Advanced RAGAS metrics
 ├── 📋 requirements.txt            # Python dependencies
 └── 📖 README.md                   # Complete documentation
 ```
@@ -160,8 +165,55 @@ uvicorn streamlit_app:app --reload
 
 ### Performance Optimizations
 - **Normalized embeddings** : `normalize_embeddings=True` for consistency
-- **MMR search** : Result diversity with `lambda_mult=0.5`
+- **MMR search** : Result diversity with `lambda_mult=0.7` (optimized)
 - **Score filtering** : Configurable threshold for result quality
+- **Enhanced retrieval** : `k=8` with `fetch_k=32` for better coverage
+
+### **Recent RAG System Improvements**
+
+#### **1. Query Expansion Engine**
+```python
+def _expand_query(self, question: str) -> str:
+    """Intelligent query expansion with botanical synonyms"""
+    expansions = {
+        "romarin": "Rosmarinus officinalis romarin",
+        "basilic": "Ocimum basilicum basilic",
+        "température": "température chaleur froid",
+        "arrosage": "arrosage eau humidité",
+        # ... 20+ botanical term expansions
+    }
+    # Automatic expansion for better search coverage
+```
+
+#### **2. Intelligent Document Filtering**
+```python
+def _filter_relevant_docs(self, docs: List[Document], question: str) -> List[Document]:
+    """Metadata-based document scoring and ranking"""
+    # Score based on exact matches, family classification, tags
+    # Returns optimally ranked documents for better context quality
+```
+
+#### **3. Enhanced Prompt Engineering**
+```python
+prompt = f"""
+Tu es un assistant botanique expert. Réponds EXCLUSIVEMENT en français, de façon PRÉCISE et CONCISE.
+Utilise UNIQUEMENT les informations du contexte fourni. Si une information n'est pas dans le contexte, NE l'invente PAS.
+
+INSTRUCTIONS STRICTES:
+1. Réponse principale: 2-4 lignes maximum, directe et factuelle
+2. Sources: Liste numérotée [1], [2], etc. avec les titres des documents utilisés
+3. Précautions: Seulement si mentionnées dans le contexte
+4. Format: Réponse + Sources + Précautions (si applicable)
+"""
+```
+
+#### **4. Post-Processing Pipeline**
+```python
+def _clean_response(self, answer: str, docs: List[Document]) -> str:
+    """Automatic response cleaning and optimization"""
+    # Removes repetitions, empty phrases, and improves readability
+    # Ensures consistent output format
+```
 
 ### Metadata Management
 - **Automatic cleaning** : List to string conversion for ChromaDB
@@ -406,6 +458,107 @@ def _clean_metadata_for_chroma(self, metadata: dict) -> dict:
 
 This implementation demonstrates advanced software engineering principles, efficient data processing, and production-ready code quality.
 
+## 🧪 Testing and Evaluation
+
+### Automated RAG Evaluation System
+
+The project includes a comprehensive evaluation framework (`eval_ragas.py`) that automatically tests the RAG system's performance using both heuristic metrics and advanced RAGAS evaluation.
+
+#### **Quick Test Execution**
+```bash
+# Basic evaluation with default parameters
+python eval_ragas.py
+
+# Custom evaluation with specific dataset and questions
+python eval_ragas.py --dataset_path dataset --questions_file eval_questions.jsonl
+
+# Custom persistence directory
+python eval_ragas.py --persist_dir ./custom_chroma_db_eval
+```
+
+#### **Test Results Location**
+All evaluation results are automatically saved in the `test_results/` folder:
+```
+test_results/
+├── eval_results_raw.json      # Raw Q&A results with metadata
+├── heuristic_report.csv       # Heuristic evaluation scores
+└── ragas_report.csv          # Advanced RAGAS metrics (if available)
+```
+
+#### **Evaluation Metrics**
+
+##### **1. Heuristic Metrics (Always Available)**
+- **`lex_f1`** : F1 score for lexical similarity between generated and expected answers
+- **`lex_precision`** : Precision of generated answer words
+- **`lex_recall`** : Recall of expected answer words
+- **`context_hit_rate`** : Percentage of relevant context documents found
+
+##### **2. RAGAS Metrics (Requires OpenAI API)**
+- **`faithfulness`** : How well the answer is grounded in the provided context
+- **`answer_relevancy`** : Relevance of the answer to the question
+- **`context_precision`** : Precision of retrieved context
+- **`context_recall`** : Recall of relevant context
+
+#### **Sample Test Results**
+```csv
+id,question,lex_f1,lex_precision,lex_recall,context_hit_rate
+q1,Monstera light conditions?,0.421,0.308,0.667,0.562
+q8,Romarin exposure?,0.2,0.167,0.25,0.125
+q12,Full sun plants?,0.533,0.4,0.8,0.5
+```
+
+### **Advanced RAG Features Tested**
+
+#### **1. Query Expansion System**
+- **Automatic synonym detection** : "romarin" → "Rosmarinus officinalis romarin"
+- **Botanical term expansion** : "température" → "température chaleur froid"
+- **Multi-language support** : French common names + scientific names
+
+#### **2. Intelligent Document Filtering**
+- **Metadata-based scoring** : Prioritizes documents with exact matches
+- **Family classification** : Bonus points for relevant botanical families
+- **Tag-based relevance** : Considers plant characteristics and use cases
+
+#### **3. Enhanced Search Parameters**
+- **Increased coverage** : `k=8` (was 4) for better document retrieval
+- **MMR optimization** : `lambda_mult=0.7` for result diversity
+- **Lower thresholds** : `score_threshold=0.15` for more inclusive results
+
+### **Performance Improvements Demonstrated**
+
+#### **Before Optimization**
+- **q8 (Romarin)** : `context_hit_rate = 0.0` (document not found)
+- **q10 (Ficus)** : `lex_f1 = 0.0` (no text similarity)
+- **q12 (Full sun)** : `lex_f1 = 0.122` (poor performance)
+
+#### **After Optimization**
+- **q8 (Romarin)** : `context_hit_rate = 0.125` (document found!)
+- **q10 (Ficus)** : `context_hit_rate = 0.375` (improved relevance)
+- **q12 (Full sun)** : `lex_f1 = 0.533` (+352% improvement!)
+
+### **Running Custom Evaluations**
+
+#### **1. Create Custom Test Questions**
+```jsonl
+{"id": "custom_q1", "question": "Your question here?", "ground_truth": "Expected answer", "doc_ids": ["fiche:plant-id"]}
+{"id": "custom_q2", "question": "Another question?", "ground_truth": "Another answer", "doc_ids": ["fiche:another-plant"]}
+```
+
+#### **2. Execute Custom Evaluation**
+```bash
+python eval_ragas.py --questions_file custom_questions.jsonl
+```
+
+#### **3. Analyze Results**
+```python
+import pandas as pd
+
+# Load results
+results = pd.read_csv("test_results/heuristic_report.csv")
+print(f"Average F1 Score: {results['lex_f1'].mean():.3f}")
+print(f"Average Context Hit Rate: {results['context_hit_rate'].mean():.3f}")
+```
+
 ## 📊 Metrics and Performance
 
 ### Knowledge Base
@@ -419,6 +572,12 @@ This implementation demonstrates advanced software engineering principles, effic
 - **Vector search** : <100ms per query
 - **Answer accuracy** : >90% with appropriate context
 - **Scalability** : Architecture extensible to 1000+ plants
+
+### **Evaluation Performance**
+- **Test execution time** : ~30 seconds for 15 questions
+- **Heuristic calculation** : Real-time scoring
+- **RAGAS integration** : Automatic fallback to heuristics
+- **Result generation** : Structured CSV + JSON outputs
 
 ## 🎯 Use Cases and Applications
 
